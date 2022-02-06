@@ -73,9 +73,8 @@ fun SearchBar(modifier: Modifier = Modifier, onSearch: (String) -> Unit = {}) {
     }
 
     Column() {
-
         CommonTextField(valueState = searchQueryState,
-            placeHosdler = "Seattle",
+            placeHosdler = "City",
             onAction = KeyboardActions {
                 if (!valid) return@KeyboardActions
                 onSearch(searchQueryState.value.trim())

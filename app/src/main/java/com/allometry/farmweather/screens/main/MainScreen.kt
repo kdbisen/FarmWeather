@@ -6,8 +6,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.produceState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +18,7 @@ import androidx.navigation.NavController
 import com.allometry.farmweather.data.DataOrException
 import com.allometry.farmweather.model.WeatherObject
 import com.allometry.farmweather.navigation.WeatherScreens
+import com.allometry.farmweather.screens.SettingScreen.SettignsViewModel
 import com.allometry.farmweather.screens.main.MainViewModel
 import com.allometry.farmweather.utils.formatDate
 import com.allometry.farmweather.utils.formatDecimals
@@ -28,21 +28,40 @@ import com.allometry.farmweather.widgets.*
 fun MainScreen(
     navController: NavController,
     mainViewModel: MainViewModel = hiltViewModel(),
+    settignsViewModel: SettignsViewModel = hiltViewModel(),
     city: String?
 ) {
 
-    val weatherData = produceState<DataOrException<WeatherObject, Boolean, Exception>>(
-        initialValue = DataOrException(loading = true)
-    ) {
-        value = mainViewModel.getWeatherData(city!!)
-    }.value
-
-    if (weatherData.loading == true) {
-        CircularProgressIndicator()
-    } else if (weatherData.data != null) {
-        Text(text = "Main Screen ${weatherData.data!!.city.name}")
-        MainScaffold(weatherObject = weatherData.data!!, navController = navController)
+    val unitFromDb = settignsViewModel.unitList.collectAsState().value
+    var unit by remember {
+        mutableStateOf("imperial")
     }
+
+    var isImaperial by remember {
+        mutableStateOf(false)
+    }
+
+
+    if(!unitFromDb.isNullOrEmpty())
+    {
+        unit = unitFromDb[0].unit.split(" ")[0].lowercase()
+
+        isImaperial = unit == "imperial"
+        val weatherData = produceState<DataOrException<WeatherObject, Boolean, Exception>>(
+            initialValue = DataOrException(loading = true)
+        ) {
+            value = mainViewModel.getWeatherData(city = city!!, unit = unit)
+        }.value
+
+        if (weatherData.loading == true) {
+            CircularProgressIndicator()
+        } else if (weatherData.data != null) {
+            Text(text = "Main Screen ${weatherData.data!!.city.name}")
+            MainScaffold(weatherObject = weatherData.data!!, navController = navController)
+        }
+    }
+
+
 
 }
 
@@ -55,7 +74,7 @@ fun MainScaffold(weatherObject: WeatherObject, navController: NavController) {
             onAddActionClicked = {
                 navController.navigate(WeatherScreens.SearchScreen.name)
             },
-            icon = Icons.Default.ArrowBack,
+           // icon = Icons.Default.ArrowBack,
             isMainScreen = true
         ) {
             Log.d("TAG -1 ", "MainScaffold: Button clicked")

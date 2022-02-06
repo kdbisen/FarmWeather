@@ -9,7 +9,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.allometry.farmweather.screens.AboutScreen.AboutScreen
 import com.allometry.farmweather.screens.FavoriteScreen.FavoriteScreen
+import com.allometry.farmweather.screens.FavoriteScreen.FavoriteViewModel
 import com.allometry.farmweather.screens.MainScreen
+import com.allometry.farmweather.screens.SettingScreen.SettignsViewModel
 import com.allometry.farmweather.screens.SettingScreen.SettingScreen
 import com.allometry.farmweather.screens.WeatherSplashScreen
 import com.allometry.farmweather.screens.main.MainViewModel
@@ -47,12 +49,12 @@ fun WeatherNavigation() {
             AboutScreen(navController = navController)
         }
         composable(WeatherScreens.FavoriteScreen.name) {
-            val mainViewModel = hiltViewModel<MainViewModel>()
-            FavoriteScreen(navController = navController)
+            val favoriteViewModel = hiltViewModel<FavoriteViewModel>()
+            FavoriteScreen(navController = navController, favoriteViewModel = favoriteViewModel)
         }
         composable(WeatherScreens.SettingScreen.name) {
-            val mainViewModel = hiltViewModel<MainViewModel>()
-            SettingScreen(navController = navController)
+            val settignsViewModel = hiltViewModel<SettignsViewModel>()
+            SettingScreen(navController = navController, settingsViewModel = settignsViewModel)
         }
 
 
