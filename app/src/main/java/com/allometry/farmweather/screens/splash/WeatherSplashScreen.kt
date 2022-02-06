@@ -47,7 +47,8 @@ fun WeatherSplashScreen(navController: NavController) {
         ))
 
         delay(2000L)
-        navController.navigate(WeatherScreens.MainScreen.name)
+        val defaultCity = "San Diego"
+        navController.navigate(WeatherScreens.MainScreen.name+"/$defaultCity" )
     })
     Surface(modifier = Modifier
         .padding(15.dp)
